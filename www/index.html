@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jquery.mobile-1.4.5.js"></script>
+    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <!-- <script src="scripts/bootstrap.min.js"></script> -->
+    <script type="text/javascript" charset="utf-8">
+
+        //prefixes of implementation that we want to test
+        window.indexedDB = window.indexedDB || window.mozIndexedDB ||
+            window.webkitIndexedDB || window.msIndexedDB;
+
+        //prefixes of window.IDB objects
+        window.IDBTransaction = window.IDBTransaction ||
+            window.webkitIDBTransaction || window.msIDBTransaction;
+        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange ||
+            window.msIDBKeyRange
+
+        if (!window.indexedDB) {
+            window.alert("Your browser doesn't support a stable version of IndexedDB.")
+        }
+        var db;
+        var request = window.indexedDB.open("newDatabase", 1);
+
+        request.onerror = function (event) {
+            console.log("error: ");
+        };
+
+        request.onsuccess = function (event) {
+
+            db = request.result;
+            console.log("success: " + db);
+        };
+        request.onupgradeneeded = function (event) {
+            var db = event.target.result;
+            var objectStore = db.createObjectStore("employee", { keyPath: "id", autoIncrement: true });
+        }
+    </script>
+</head>
+
+<body>
+    <div data-role="page" id="pageone">
+        <div data-role="header" style="overflow:hidden;" data-position="fixed">
+            <h1>I-Rate</h1>
+            <a href="#pagetwo" data-icon="plus" class="ui-btn-right">Add</a>
+        </div>
+        <div>
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Search fruits..." data-inset="true"
+                id="listData" data-position="fixed">
+            </ul>
+        </div>
+    </div>
+    <div data-role="page" id="pagetwo">
+        <div data-role="header" data-position="fixed">
+            <a href="#" data-icon="delete" onclick="cancel()">Cancel</a>
+            <h1>Edit Contact</h1>
+            <a href="#" data-icon="check" data-theme="b" onclick="save()">Save</a>
+        </div>
+        <form>
+            <label for="rName">Name:</label>
+            <input type="text" name="rName" id="rName" value="">
+            <label for="rType">Type :</label>
+            <input type="text" name="rType" id="rType" value="">
+            <label for="date">Date and time of the visit:</label>
+            <input type="date" name="rDate" id="rDate" value="">
+            <label for="avPrice">Average meal price per person :</label>
+            <input type="text" name="avPrice" id="avPrice" value="">
+            <div class="ui-field-contain">
+                    <label for="serviceRatingRate">Service rating :</label>
+                    <select name="serviceRatingRate" id="serviceRatingRate">
+                            <option value="1">Need to improve</option>
+                            <option value="2">OKAY</option>
+                            <option value="3">Good</option>
+                            <option value="4">Excellent</option>
+                        </select>
+            </div>
+            <div class="ui-field-contain">
+                    <label for="cleanlinessRatingRate">Cleanliness rating :</label>
+                    <select name="cleanlinessRatingRate" id="cleanlinessRatingRate">
+                         <option value="1">Need to improve</option>
+                            <option value="2">OKAY</option>
+                            <option value="3">Good</option>
+                            <option value="4">Excellent</option>
+                        </select>
+            </div>
+            <div class="ui-field-contain">
+                <label for="foodRating">Food quality rating :</label>
+                  <select name="foodRating" id="foodRating">
+                    <option value="1">Need to improve</option>
+                        <option value="2">OKAY</option>
+                        <option value="3">Good</option>
+                         <option value="4">Excellent</option>
+                </select>
+            </div>
+
+            <label for="textarea">Note:</label>
+            <textarea cols="40" rows="8" name="textarea" id="note"></textarea>
+            <label for="rName">Reporter:</label>
+            <input type="text" name="rName" id="reporter" value="">
+        </form>
+    </div>
+</body>
+<script>
+    var db;
+    var request = window.indexedDB.open("newDatabase", 1);
+
+    request.onerror = function (event) {
+        console.log("error: ");
+    };
+
+    request.onsuccess = function (event) {
+        db = request.result;
+        var objectStore = db.transaction("employee").objectStore("employee");
+        objectStore.openCursor().onsuccess = function (event) {
+            var cursor = event.target.result;
+            if (cursor) {
+                $("#listData").append('<li class="ui-first-child"><a href="#" onClick="goPage1(' + cursor.value.id + ');"><h1 style="font-size: 30px;">' + cursor.value.name + '</h1><p><strong style="font-size: 25px;">' + cursor.value.type + '</strong></p><p style="font-size: 20px;">Rate: ' + cursor.value.result + ' </p><p style="font-size: 15px;">Date and time: ' + cursor.value.date + '</p></a></li>').listview('refresh')
+                cursor.continue();
+            }
+        };
+    };
+    function goPage1(id) {
+        window.location = `detail.html?id=${id}`
+    }
+
+    function save() {
+        var sum = (parseInt($("#foodRating").find(":selected").val()) + parseInt($("#cleanlinessRatingRate").find(":selected").val()) + parseInt($("#serviceRatingRate").find(":selected").val())) / 3;
+        var result = "";
+        if (sum < 2) {
+            result = "Need to improve"
+        } else if (2 <= sum && sum < 3) {
+            result = "Okay"
+        } else if (3 <= sum && sum < 4) {
+            result = "Good"
+        } else {
+            result = "Excellent"
+        }
+
+        var data = {
+            name: "",
+            type: "",
+            date: "",
+            price: "",
+            service: "",
+            cleanLiness: "",
+            foodQuality: "",
+            note: "",
+            reporter: "",
+            result: ""
+        }
+
+        data.name = $('#rName').val()
+        data.type = $("#rType").val()
+        data.date = $("#rDate").val()
+        data.price = $("#avPrice").val()
+        data.service = $("#foodRating").find(":selected").val()
+        data.cleanLiness = $("#cleanlinessRatingRate").find(":selected").val()
+        data.foodQuality = $("#serviceRatingRate").find(":selected").val()
+        data.note = $("#note").val();
+        data.reporter = $("#reporter").val();
+        data.result = result
+        console.log(data);
+        var request = db.transaction(["employee"], "readwrite")
+            .objectStore("employee")
+            .add(data);
+
+        request.onsuccess = function (event) {
+            alert("Prasad has been added to your database.");
+            window.location = "index.html"
+        };
+
+        request.onerror = function (event) {
+            alert("Unable to add data\r\nPrasad is already exist in your database! ");
+        }
+    }
+    function cancel() {
+        window.location = `index.html`
+    }
+   //// test console.log($("#listData li").index(event.target));
+   jQuery( "#listData" ).on( "taphold", function( event ) { console.log(event); } )
+</script>
+
+</html>

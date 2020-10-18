@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jquery.mobile-1.4.5.js"></script>
+    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <!-- <script src="scripts/bootstrap.min.js"></script> -->
+    <script type="text/javascript">
+
+     
+    </script>
+</head>
+
+<body>
+    <form>
+        <label for="rName">Name:</label>
+        <input type="text" name="rName" id="rName" value="">
+        <label for="rType">Type :</label>
+        <input type="text" name="rType" id="rType" value="">
+        <label for="date">Date and time of the visit:</label>
+        <input type="date" name="rDate" id="rDate" value="">
+        <label for="avPrice">Average meal price per person :</label>
+        <input type="text" name="avPrice" id="avPrice" value="">
+        <div class="ui-field-contain">
+                <label for="serviceRatingRate">Service rating :</label>
+                <select name="serviceRatingRate" id="serviceRatingRate">
+                        <option value="1">Need to improve</option>
+                        <option value="2">OKAY</option>
+                        <option value="3">Good</option>
+                        <option value="4">Excellent</option>
+                    </select>
+        </div>
+        <div class="ui-field-contain">
+                <label for="cleanlinessRatingRate">Cleanliness rating :</label>
+                <select name="cleanlinessRatingRate" id="cleanlinessRatingRate">
+                     <option value="1">Need to improve</option>
+                        <option value="2">OKAY</option>
+                        <option value="3">Good</option>
+                        <option value="4">Excellent</option>
+                    </select>
+        </div>
+        <div class="ui-field-contain">
+            <label for="foodRating">Food quality rating :</label>
+              <select name="foodRating" id="foodRating">
+                <option value="1">Need to improve</option>
+                    <option value="2">OKAY</option>
+                    <option value="3">Good</option>
+                     <option value="4">Excellent</option>
+            </select>
+        </div>
+        <label for="textarea">Note:</label>
+        <textarea cols="40" rows="8" name="textarea" id="textarea"></textarea>
+        <label for="textinput-hide" class="ui-hidden-accessible">Name of the reporter :</label>
+        <input type="text" name="textinput-hide" id="textinput-hide" placeholder="Text input" value="">
+            <input id="oke" type="button" data-role="none" value="Button">
+
+    </form>
+</body>
+<script>
+
+    $("#oke").click(function (e) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        var sum = (parseInt($("#foodRating").find(":selected").val()) + parseInt($("#cleanlinessRatingRate").find(":selected").val()) + parseInt($("#serviceRatingRate").find(":selected").val())) / 3;
+        var result = "";
+        if (sum < 2) {
+            result = "Need to improve"
+        } else if (2 <= sum && sum < 3) {
+            result = "Okay"
+        } else if (3 <= sum && sum < 4) {
+            result = "Good"
+        } else {
+            result = "Excellent"
+        }
+
+        var data = {
+            name: "",
+            type: "",
+            date: "",
+            price: "",
+            result: ""
+        }
+
+        data.name = $('#rName').val()
+        data.type = $("#rType").val()
+        data.date = $("#rDate").val()
+        data.price = $("#avPrice").val()
+        data.result = result
+        console.log(data);
+        var request = db.transaction(["employee"], "readwrite")
+            .objectStore("employee")
+            .add(data);
+        
+        request.onsuccess = function (event) {
+            alert("Prasad has been added to your database.");
+        };
+
+        request.onerror = function (event) {
+            alert("Unable to add data\r\nPrasad is already exist in your database! ");
+        }
+    });
+</script>
+</html>

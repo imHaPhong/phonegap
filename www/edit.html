@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jquery.mobile-1.4.5.js"></script>
+    <script src="./js/edit.js"></script>
+</head>
+
+<body>
+    <div data-role="header" data-position="fixed">
+        <a href="#" data-icon="delete" onclick="cancel()">Cancel</a>
+        <h1>Edit Contact</h1>
+        <a href="#" data-icon="check" data-theme="b" onclick="save()">Save</a>
+    </div>
+    <div class="ui-field-contain">
+            <label for="textinput-5">Name:</label>
+            <input type="text" name="textinput-5" id="textinput-5" placeholder="Name" value="" data-mini="true" class="name">
+    </div>
+    <div class="ui-field-contain">
+            <label for="textinput-5">Type:</label>
+            <input type="text" name="textinput-5" id="textinput-5" placeholder="Type" value="" data-mini="true" class="type">
+    </div>
+    <div class="ui-field-contain">
+            <label for="textinput-5">Date:</label>
+        <input type="date" data-role="date" data-inline="true" class="date">    
+    </div>
+    <div class="ui-field-contain">
+            <label for="textinput-5">Price:</label>
+            <input type="text" name="textinput-5" id="textinput-5" placeholder="Price" value="" data-mini="true" class="price">
+    </div>
+    <div class="ui-field-contain">
+            <label for="textinput-5">Result:</label>
+            <input type="text" name="textinput-5" id="textinput-5" placeholder="Result" value="" data-mini="true" class="result">
+    </div>
+    <div class="ui-field-contain">
+            <label for="serviceRatingRate">Service rating :</label>
+            <select name="serviceRatingRate" id="serviceRatingRate">
+                    <option value="1">Need to improve</option>
+                    <option value="2">OKAY</option>
+                    <option value="3">Good</option>
+                    <option value="4">Excellent</option>
+                </select>
+    </div>
+    <div class="ui-field-contain">
+            <label for="cleanlinessRatingRate">Cleanliness rating :</label>
+            <select name="cleanlinessRatingRate" id="cleanlinessRatingRate">
+                 <option value="1">Need to improve</option>
+                    <option value="2">OKAY</option>
+                    <option value="3">Good</option>
+                    <option value="4">Excellent</option>
+                </select>
+    </div>
+    <div class="ui-field-contain">
+        <label for="foodRating">Food quality rating :</label>
+          <select name="foodRating" id="foodRating">
+            <option value="1">Need to improve</option>
+                <option value="2">OKAY</option>
+                <option value="3">Good</option>
+                 <option value="4">Excellent</option>
+        </select>
+    </div>
+    <div class="ui-field-contain">
+            <label for="textinput-5">Reporter:</label>
+        <input type="text" name="textinput-hide" id="reporter" placeholder="Name of the reporter :" value="">
+    </div>
+    <label for="textarea">Note:</label>
+        <textarea cols="40" rows="8" name="textarea" id="textarea"></textarea>
+        
+</body>
+
+</html>
