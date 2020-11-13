@@ -15,11 +15,11 @@ function cancel() {
 var id = getUrlVars()["id"];
 const storeID = id;
 var db;
-var request = window.indexedDB.open("newDatabase", 1);
+var request = window.indexedDB.open("RestaurantDB", 1);
 
 function deleteRestaurant() {
-   var request = db.transaction(["employee"], "readwrite")
-   .objectStore("employee")
+   var request = db.transaction(["restaurant"], "readwrite")
+   .objectStore("restaurant")
    .delete(parseInt(id));
    
    request.onsuccess = function(event) {
@@ -39,8 +39,8 @@ request.onerror = function (event) {
 
 request.onsuccess = function (event) {
    db = request.result;
-   var transaction = db.transaction(["employee"]);
-   var objectStore = transaction.objectStore("employee");
+   var transaction = db.transaction(["restaurant"]);
+   var objectStore = transaction.objectStore("restaurant");
    var request1 = objectStore.get(parseInt(id));
 
    request1.onerror = function (event) {
@@ -53,18 +53,32 @@ request.onsuccess = function (event) {
          result = "Need to improve"
          break;
          case "2":
-            console.log("das");
-
             result =" Oke"
             break;
          case "3":
-            result = "good"
+            result = "Good"
             break;
          case "4": 
          result ="excellent"
             break;
       }
       return result;
+   }
+   function displayWithColor(id, getResult) {
+      switch (getResult) {
+         case "1": 
+         $(id).text(conver(getResult)).css('color','red')
+         break;
+         case "2":
+            $(id).text(conver(getResult)).css('color','orange')
+            break;
+         case "3":
+            $(id).text(conver(getResult)).css('color','#ebbd34')
+            break;
+         case "4": 
+         $(id).text(conver(getResult)).css('color','green')
+            break;
+      }
    }
 
    request1.onsuccess = function (event) {
@@ -76,14 +90,23 @@ request.onsuccess = function (event) {
         $(".rType").text(request1.result.type)
         $(".rDate").text(request1.result.date)
         $(".rPrice").text(request1.result.price)
-        $(".rFood").text(conver(request1.result.foodQuality))
-        $(".rClean").text(conver(request1.result.cleanLiness))
-        $(".rService").text(conver(request1.result.service))
-        $(".rResult").text(request1.result.result)
+        displayWithColor(".rFood",request1.result.foodQuality)
+        displayWithColor(".rClean",request1.result.cleanLiness)
+        displayWithColor(".rService",request1.result.service)
+      //   $(".rFood").text(conver(request1.result.foodQuality))
+      //   $(".rClean").text(conver(request1.result.cleanLiness))
+      //   $(".rService").text(conver(request1.result.service))
+      if(request1.result.result == "Need to improve"){
+         $(".rResult").text(request1.result.result).css('color','red')
+      } else if(request1.result.result == "Oke") {
+         $(".rResult").text(request1.result.result).css('color','orange')
+      } else if(request1.result.result == "Good"){
+         $(".rResult").text(request1.result.result).css('color','#ebbd34')
+      }else{
+         $(".rResult").text(request1.result.result).css('color','green')
+      }
         $(".note").text(request1.result.note)
         $(".rReposter").text(request1.result.reporter)
-        console.log(conver(request1.result.service));
-
       } else {
          alert("Kenny couldn't be found in your database!");
       }

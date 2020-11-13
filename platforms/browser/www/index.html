@@ -7,7 +7,26 @@
     <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <style>
+        .showErr {
+            color: red;
+        }
 
+        #test {
+            background-color: #fcad03;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+            border: 1px azure solid;
+        }
+
+        #test::after {
+            background-color: #fcad03;
+        }
+    </style>
     <script src="./js/jquery.js"></script>
     <script src="./js/jquery.mobile-1.4.5.js"></script>
     <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
@@ -28,7 +47,7 @@
             window.alert("Your browser doesn't support a stable version of IndexedDB.")
         }
         var db;
-        var request = window.indexedDB.open("newDatabase", 1);
+        var request = window.indexedDB.open("RestaurantDB", 1);
 
         request.onerror = function (event) {
             console.log("error: ");
@@ -41,7 +60,7 @@
         };
         request.onupgradeneeded = function (event) {
             var db = event.target.result;
-            var objectStore = db.createObjectStore("employee", { keyPath: "id", autoIncrement: true });
+            var objectStore = db.createObjectStore("restaurant", { keyPath: "id", autoIncrement: true });
         }
     </script>
 </head>
@@ -50,34 +69,40 @@
     <div data-role="page" id="pageone">
         <div data-role="header" style="overflow:hidden;" data-position="fixed">
             <h1>I-Rate</h1>
-            <a href="#pagetwo" data-icon="plus" class="ui-btn-right">Add</a>
+
         </div>
         <div>
-            <ul data-role="listview" data-filter="true" data-filter-placeholder="Search fruits..." data-inset="true"
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Find restaurant" data-inset="true"
                 id="listData" data-position="fixed">
             </ul>
         </div>
+         <a href="#pagetwo"
+            class="ui-btn ui-shadow ui-corner-all ui-icon-plus ui-btn-icon-notext ui-btn-b ui-btn-inline" id="test"></a>
+
     </div>
     <div data-role="page" id="pagetwo">
-        <div data-role="header" data-position="fixed">
-            <a href="#" data-icon="delete" onclick="cancel()">Cancel</a>
-            <h1>Edit Contact</h1>
-            <a href="#" data-icon="check" data-theme="b" onclick="save()">Save</a>
-        </div>
-        <form>
+        <form id="addRes">
+            <div data-role="header" data-position="fixed">
+                <a href="#" data-icon="delete" onclick="cancel()">Cancel</a>
+                <h1>Add restaurant</h1>
+            </div>
             <label for="rName">Name:</label>
             <input type="text" name="rName" id="rName" value="">
+            <div class="errName"></div>
             <label for="rType">Type :</label>
             <input type="text" name="rType" id="rType" value="">
+            <div class="errType"></div>
             <label for="date">Date and time of the visit:</label>
             <input type="date" name="rDate" id="rDate" value="">
+            <div></div>
             <label for="avPrice">Average meal price per person :</label>
             <input type="text" name="avPrice" id="avPrice" value="">
+            <div class="errPrice"></div>
             <div class="ui-field-contain">
                     <label for="serviceRatingRate">Service rating :</label>
                     <select name="serviceRatingRate" id="serviceRatingRate">
                             <option value="1">Need to improve</option>
-                            <option value="2">OKAY</option>
+                            <option value="2">Oke</option>
                             <option value="3">Good</option>
                             <option value="4">Excellent</option>
                         </select>
@@ -86,7 +111,7 @@
                     <label for="cleanlinessRatingRate">Cleanliness rating :</label>
                     <select name="cleanlinessRatingRate" id="cleanlinessRatingRate">
                          <option value="1">Need to improve</option>
-                            <option value="2">OKAY</option>
+                            <option value="2">Oke</option>
                             <option value="3">Good</option>
                             <option value="4">Excellent</option>
                         </select>
@@ -95,22 +120,30 @@
                 <label for="foodRating">Food quality rating :</label>
                   <select name="foodRating" id="foodRating">
                     <option value="1">Need to improve</option>
-                        <option value="2">OKAY</option>
+                        <option value="2">Oke</option>
                         <option value="3">Good</option>
                          <option value="4">Excellent</option>
                 </select>
             </div>
-
             <label for="textarea">Note:</label>
             <textarea cols="40" rows="8" name="textarea" id="note"></textarea>
             <label for="rName">Reporter:</label>
-            <input type="text" name="rName" id="reporter" value="">
+            <input type="text" name="rReporter" id="rReporter">
+            <div class="errReporter"></div>
+            <div>
+                <div class="ui-grid-solo">
+                        <div class="ui-block-a"><input type="submit" data-icon="check" value="Submit" id="submit" />
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </body>
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 <script>
+    var isChecked = false;
     var db;
-    var request = window.indexedDB.open("newDatabase", 1);
+    var request = window.indexedDB.open("RestaurantDB", 1);
 
     request.onerror = function (event) {
         console.log("error: ");
@@ -118,26 +151,101 @@
 
     request.onsuccess = function (event) {
         db = request.result;
-        var objectStore = db.transaction("employee").objectStore("employee");
-        objectStore.openCursor().onsuccess = function (event) {
-            var cursor = event.target.result;
+        var objectStore = db.transaction("restaurant").objectStore("restaurant");
+        let currentCursor = objectStore.openCursor(IDBKeyRange.upperBound("F", true), "prev").onsuccess = e => {
+            let cursor = e.target.result;
             if (cursor) {
                 $("#listData").append('<li class="ui-first-child"><a href="#" onClick="goPage1(' + cursor.value.id + ');"><h1 style="font-size: 30px;">' + cursor.value.name + '</h1><p><strong style="font-size: 25px;">' + cursor.value.type + '</strong></p><p style="font-size: 20px;">Rate: ' + cursor.value.result + ' </p><p style="font-size: 15px;">Date and time: ' + cursor.value.date + '</p></a></li>').listview('refresh')
-                cursor.continue();
+                cursor.continue(); // move to the next position
             }
-        };
+        }
+
+        // objectStore.openCursor().onsuccess = function (event) {
+        //     var cursor = event.target.result;
+        //     if (cursor) {
+        //         cursor.continue();
+        //     }
+        // };
     };
     function goPage1(id) {
         window.location = `detail.html?id=${id}`
     }
 
+    $("#addRes").submit(function (event) {
+        event.preventDefault();
+        var check = true;
+        $('.showErr').remove()
+
+        if($('#rName').val() == "") {
+            $('.errName').append( "<p class='showErr'>Name require</p>" )
+            check = false
+        }
+        if($('#rType').val() == "") {
+            $('.errType').append( "<p class='showErr'>Type</p>" )
+            check = false
+        }
+        if($('#avPrice').val() == "") {
+            $('.errPrice').append( "<p class='showErr'>Price</p>" )
+            check = false
+        }
+        if($('#rReporter').val() == "") {
+            $('.errReporter').append( "<p class='showErr'>REpor</p>" )
+            check = false
+        }
+        if(check) {
+            save()
+        }
+    });
+    //     $('#addRes').validate({
+    //     rules: {
+    //         rName: {
+    //             required: true
+    //         },
+    //         rType: {
+    //             required: true
+    //         },
+    //         rReporter: {
+    //             required: true
+    //         },
+    //         avPrice: {
+    //             required: true
+    //         },
+    //         rReporter: {
+    //             required: true
+    //         }
+    //     },
+    //     messages: {
+    //         rName: {
+    //             required: "Please enter your name."
+    //         },
+    //         rType: {
+    //             required: "Please enter type of restaurant."
+    //         },
+    //         avPrice: {
+    //             required: "Average meal price per person is required."
+    //         },
+    //         rReporter: {
+    //             required: "Name of reporter is required."
+    //         }
+    //     },
+    //     errorPlacement: function (error, element) {
+    //         error.appendTo(element.parent().next("div"));
+    //     },
+    //     submitHandler: function (form) {
+    //         $(':mobile-pagecontainer').pagecontainer('change', '#success', {
+    //             reload: false
+    //         });
+    //         save()
+    //         return false;
+    //     }
+    // });
     function save() {
         var sum = (parseInt($("#foodRating").find(":selected").val()) + parseInt($("#cleanlinessRatingRate").find(":selected").val()) + parseInt($("#serviceRatingRate").find(":selected").val())) / 3;
         var result = "";
         if (sum < 2) {
             result = "Need to improve"
         } else if (2 <= sum && sum < 3) {
-            result = "Okay"
+            result = "Oke"
         } else if (3 <= sum && sum < 4) {
             result = "Good"
         } else {
@@ -165,27 +273,25 @@
         data.cleanLiness = $("#cleanlinessRatingRate").find(":selected").val()
         data.foodQuality = $("#serviceRatingRate").find(":selected").val()
         data.note = $("#note").val();
-        data.reporter = $("#reporter").val();
+        data.reporter = $("#rReporter").val();
         data.result = result
-        console.log(data);
-        var request = db.transaction(["employee"], "readwrite")
-            .objectStore("employee")
+        var request = db.transaction(["restaurant"], "readwrite")
+            .objectStore("restaurant")
             .add(data);
 
         request.onsuccess = function (event) {
-            alert("Prasad has been added to your database.");
+            alert("Restaurant has been added to your database.");
             window.location = "index.html"
         };
 
         request.onerror = function (event) {
-            alert("Unable to add data\r\nPrasad is already exist in your database! ");
+            alert("Unable to add data");
         }
     }
     function cancel() {
         window.location = `index.html`
     }
-   //// test console.log($("#listData li").index(event.target));
-   jQuery( "#listData" ).on( "taphold", function( event ) { console.log(event); } )
+    jQuery("#listData").on("taphold", function (event) { console.log(event); })
 </script>
 
 </html>

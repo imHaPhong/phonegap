@@ -12,14 +12,14 @@ function getUrlVars() {
 var id = getUrlVars()["id"];
 const storeID = id;
 var db;
-var request = window.indexedDB.open("newDatabase", 1);
+var request = window.indexedDB.open("RestaurantDB", 1);
 
 function cancel() {
     window.location = `detail.html?id=${id}` 
 }
 
 function save() {
-    var objectStore = db.transaction(["employee"], "readwrite").objectStore("employee");
+    var objectStore = db.transaction(["restaurant"], "readwrite").objectStore("restaurant");
     var request = objectStore.get(parseInt(id));
     request.onerror = function (event) {
         // Handle errors!
@@ -33,6 +33,22 @@ function save() {
         restaurant.service =$("#foodRating").find(":selected").val()
         restaurant.cleanLiness = $("#cleanlinessRatingRate").find(":selected").val()
         restaurant.foodQuality = $("#serviceRatingRate").find(":selected").val()
+        restaurant.reporter = $("#reporter").val()
+        restaurant.note = $("#notes").val()
+        var sum = (parseInt($("#foodRating").find(":selected").val()) + parseInt($("#cleanlinessRatingRate").find(":selected").val()) + parseInt($("#serviceRatingRate").find(":selected").val())) / 3;
+        var result = "";
+        if (sum < 2) {
+            result = "Need to improve"
+        } else if (2 <= sum && sum < 3) {
+            result = "Oke"
+        } else if (3 <= sum && sum < 4) {
+            result = "Good"
+        } else {
+            result = "Excellent"
+        }
+        restaurant.result = result
+
+        
         // Put this updated object back into the database.
         var requestUpdate = objectStore.put(restaurant);
         requestUpdate.onerror = function (event) {
@@ -52,8 +68,8 @@ request.onerror = function (event) {
 
 request.onsuccess = function (event) {
     db = request.result;
-    var transaction = db.transaction(["employee"]);
-    var objectStore = transaction.objectStore("employee");
+    var transaction = db.transaction(["restaurant"]);
+    var objectStore = transaction.objectStore("restaurant");
     var request1 = objectStore.get(parseInt(id));
 
     request1.onerror = function (event) {
@@ -71,10 +87,10 @@ request.onsuccess = function (event) {
             $("#cleanlinessRatingRate").val(request1.result.cleanLiness).selectmenu('refresh');
             $("#serviceRatingRate").val(request1.result.foodQuality).selectmenu('refresh');
             console.log(request1.result.reporter);
-            $("#textarea").val(request1.result.note)
+            $("#notes").val(request1.result.note)
             $("#reporter").val(request1.result.reporter)
         } else {
-            alert("Kenny couldn't be found in your database!");
+            alert("Can not find restaurant in database!");
         }
     };
 };

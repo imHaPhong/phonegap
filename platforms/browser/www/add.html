@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jquery.mobile-1.4.5.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <style>
+        .error {	
+color:red;	
+}	
+#test{	
+   background-color: #fcad03;	
+   position: fixed;	
+   bottom: 30px;	
+   right: 30px;	
+   width: 50px;	
+   height: 50px;	
+   border-radius: 100%;	
+   border: 1px azure solid;	
+}	
+#test::after{	
+   background-color: #fcad03;	
+}
+</style>
+</head>
+<body>
+    <form id="rate" name="rate">
+        <div >
+            <div class="form-group" id="owner" data-role="fieldcontain">
+                <label>Your name</label>
+                <input type="text" class="form-control" name="owner_name"  placeholder="Enter your name" id="owner_name" title="Please only enter text">
+            </div>
+            <div class="form-group" id="phone" data-role="fieldcontain">
+                <label>Your phone</label>
+                <input type="text" class="form-control" name="owner_phone" placeholder="Enter your phone" id="owner_phone"  >
+            </div>
+            <div class="form-group" id="rest-name" data-role="fieldcontain">
+                <label>Restaurant name</label>
+                <input type="text" class="form-control" name="restaurant_name"  placeholder="Enter restaurant name" id="restaurant_name">
+            </div>
+            <div class="form-group" id="resType" data-role="fieldcontain">
+                <label>Restaurant type</label>
+                <input  id="res_types"  name="res_types" list= "res-type" type="text"/>
+                <datalist id="res-type">
+                    <option value="Grill">
+                    <option value="Fast food">
+                    <option value="Cake">
+                    <option value="Seafood">
+                </datalist>
+            </div>
+            <div class="form-group" id="address" data-role="fieldcontain">
+                <label>Restaurant address</label>
+                <input type="text" class="form-control" name="res_address"  placeholder="Enter restaurant address" id="res_address" >
+            </div>
+            <div class="form-group" id="rate-services" data-role="fieldcontain">
+                <label>Service</label>
+                <select id="service_rate"  name="service_rate" type= "text" >
+                        <option value=""></option>
+                        <option value="1">Bad</option>
+                        <option value="2">Normal</option>
+                        <option value="3">Rather</option>
+                        <option value="4">Good</option>
+                        <option value="5">Excellent</option>
+                    </select>
+            </div>
+            <div class="form-group" id="rate-cleans" data-role="fieldcontain">
+                <label>Cleanliness</label>
+                
+                <select list="cleans"  id="clean_rate" name="clean_rate" type = "text" >
+                    <option></option>
+                    <option value="1">Bad</option>
+                    <option value="2">Normal</option>
+                    <option value="3">Rather</option>
+                    <option value="4">Good</option>
+                    <option value="5">Excellent</option>
+                </select>
+            </div>
+            <div class="form-group" id="foods-rate" data-role="fieldcontain">
+                <label>Food quality</label>
+                <select list="foods"  id="food_rate" name="foods_rate" type="text">
+                            <option></option>
+                            <option value="1">Bad</option>
+                            <option value="2">Normal</option>
+                            <option value="3">Rather</option>
+                            <option value="4">Good</option>
+                            <option value="5">Excellent</option>
+                        </select>
+            </div>
+            <div class="form-group" data-role="fieldcontain">
+                <label>Day and time of visit</label>
+                <div id="date-visit">
+                <input type="date" class="form-control" id="date" name="date">
+                </div>
+                <div id="time-visit">
+                    <input type="time" class="form-control"  id="time"  name="time">
+                </div>
+            </div>
+            <div class="form-group">
+            <label >Notes</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <button data-role="submit" type="submit" style="background-color: #248f24; color: white;">Post</button>
+        </div>
+    </form>
+</body>
+<script>
+        $("form[name='rate']").validate({
+                rules: {
+                    owner_name: {
+                        required: true
+                    },
+                    owner_phone: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 11
+                    },
+                    restaurant_name: {
+                        required: true
+                    },
+                    res_types: {
+                        required: true
+                    },
+                    res_address:{
+                        required: true
+                    },
+                    // service_rate:{
+                    //     required: true,
+                    //     number: true,
+                    // },
+                    // clean_rate:{
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // foods_rate:{
+                    //     required: true,
+                    //     number: true
+                    // },
+                    date:{
+                        required: true,
+                    },
+                    time:{
+                        required: true
+                    }
+
+                },
+                messages: {
+                    owner_name: {
+                        required: "Please enter your first name."
+                    },
+                    owner_phone: {
+                        required: "Please enter your phone.",
+                        minlength: "Phone number is at least 10 characters",
+                        maxlength: "Phone number must not exceed 11 characters "
+                    },
+                    restaurant_name: {
+                        required: "Please enter restaurant name."
+                    },
+                    res_types:{
+                        required: "Please enter your restaurant type"
+                    },
+                    res_address:{
+                        required: "Please enter restaurant address"
+                    },
+                    // service_rate :{
+                    //     required: "Please choose service rate"
+                    // },
+                    // clean_rate:{
+                    //     required: "Please choose clean rate"
+                    // },
+                    // foods_rate:{
+                    //     required: "Please choose food rate"
+                    // },
+                    date:{
+                        required: "Please choose the date you visited"
+                    },
+                    time:{
+                        required: "Please choose the time you visited"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    error.appendTo(element.parent().prev());
+                },
+                submitHandler: function () {
+                    const rate = {
+                                owner: $('#owner_name').val(),
+                                owner_phone: $('#owner_phone').val(),
+                                res_name: $('#restaurant_name').val(),
+                                res_types: $('#res-types').val(),
+                                res_address: $('#res_address').val(),
+                                service_rate: $('#service_rate').val(),
+                                clean_rate: $('#clean_rate').val(),
+                                food_rate: $('#food_rate').val(),
+                                date_visited: $('#date').val() + " " + $('#time').val(),
+                                notes: $('#notes').val(),
+                            }
+                            return false
+                }
+            });
+    function back(){
+        window.location = 'index.html'
+    }
+    $("form[name='addRes']").validate({	
+    rules: {	
+        rName: {	
+            required: true	
+        },	
+        rType: {	
+            required: true	
+        },	
+        rReporter: {	
+            required: true	
+        },	
+        avPrice: {	
+            required: true	
+        },	
+        rReporter: {	
+            required: true	
+        }	
+    },	
+    messages: {	
+        rName: {	
+            required: "Please enter your name."	
+        },	
+        rType: {	
+            required: "Please enter type of restaurant."	
+        },	
+        avPrice: {	
+            required: "Average meal price per person is required."	
+        },	
+        rReporter: {	
+            required: "Name of reporter is required."	
+        }	
+    },	
+    errorPlacement: function (error, element) {	
+        error.appendTo(element.parent().next("div"));	
+    },	
+    submitHandler: function () {	
+        return false;	
+    }	
+});
+</script>
+<script type="text/javascript" src="cordova.js"></script>
+
+</html>

@@ -16,7 +16,7 @@
     
     <div id="detailsPage" data-role="page" data-add-back-btn="true">
         <div data-role="header" class="header" data-position="fixed" >
-            <a href="index.html" data-icon="arrow-l" class="ui-btn-left " onclick="cancel()">Back</a>
+            <a href="index.html" data-icon="arrow-l" class="ui-btn-left " onclick="back()">Back</a>
             <div data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
                 <a href="#" class="ui-btn ui-btn-icon-right ui-icon-edit ui-btn-icon-notext" onClick="get_value();">Edit</a>
                 <a href="#popupDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-delete ui-btn-icon-right ui-btn-b ui-btn-icon-notext">Delete</a>
@@ -49,10 +49,15 @@
             <h4>Notes :</h4>
             <p class="note">Day la note</p>
             <h4 style="padding-top: 5px; display: inline-block; margin-right: 40px;">Name of reposter: </h4>
-            <p style="display: inline-block;" class="rReposter">thoi gian</p> <br>
+            <p style="display: inline-block;" class="rReposter"></p> <br>
         </div>
             
     </div>
 
 </body>
+<script>
+    function back(){
+        window.location = 'index.html'
+    }
+</script>
 </html>
